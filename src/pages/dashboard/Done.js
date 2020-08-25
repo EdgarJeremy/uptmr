@@ -1,23 +1,21 @@
 import React from 'react';
-import { Table, Space, Button, Modal, Input, Form, Popconfirm, DatePicker, Tag, Radio } from 'antd';
+import { Table, Space, Button, Modal, Input, Form, Popconfirm, DatePicker, Tag, Radio, Avatar } from 'antd';
 import moment from 'moment';
 import { PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
 
 import 'moment/locale/id';
-import Questionnaire from '../../components/Questionnaire';
 
 const { Column } = Table;
 
-export default class Report extends React.Component {
+export default class Done extends React.Component {
 
     state = {
         ready: false,
         addPopup: false,
         data: null,
         files: [],
-        urgency: null,
-        questionnairePopup: false
+        urgency: null
     }
 
     componentDidMount() {
@@ -30,9 +28,8 @@ export default class Report extends React.Component {
         models.Report.collection({
             attributes: ['id', 'description', 'urgency', 'room', 'since', 'done', 'created_at'],
             where: {
-                rejection_note: null,
                 department_id: user.department_id,
-                done: false
+                done: true
             },
             include: [{
                 model: 'User',
@@ -50,13 +47,9 @@ export default class Report extends React.Component {
     onAdd() {
         const { files } = this.state;
         const { models } = this.props;
-        this.form.validateFields(['description', 'since', 'room', 'files', 'urgency', 'qs']).then((values) => {
-            console.log(values)
+        this.form.validateFields(['description', 'since', 'room', 'files', 'urgency']).then((values) => {
             delete values.files;
             values.files = files;
-            values.questionnaire = values.qs.questionnaire;
-            values.urgency = values.qs.urgency;
-            delete values.qs;
             models.Report.create(values).then((report) => this.setState({ addPopup: false })).then(() => this.fetch());
         }).catch((err) => { });
     }
@@ -89,12 +82,10 @@ export default class Report extends React.Component {
 
     render() {
         const { ready, data, addPopup } = this.state;
-        const { models } = this.props;
         return (
             ready ? (
                 <div>
-                    <h3>Laporan Dikirim</h3>
-                    <Button type="primary" icon={<PlusOutlined />} onClick={() => this.setState({ addPopup: true })}>Tambah</Button><br /><br />
+                    <h3>Laporan Selesai</h3>
                     <Table dataSource={data.rows}>
                         <Column title="Tanggal Kerusakan" key="since" render={(r) => moment(r.since).format('Do MMMM YYYY')} />
                         <Column title="Tanggal Kirim" key="created_at" render={(r) => moment(r.created_at).format('Do MMMM YYYY, h:mm:ss a')} />
@@ -154,10 +145,14 @@ export default class Report extends React.Component {
                                 <input type="file" multiple onChange={this.onChangeFile.bind(this)} accept="image/png,image/jpg,image/jpeg" />
                             </Form.Item>
                             <Form.Item
-                                label="Kuisioner"
-                                name="qs"
-                                rules={[{ required: true, message: 'Kuisioner harus diisi' }]}>
-                                <Questionnaire models={models} />
+                                label="Prioritas"
+                                name="urgency"
+                                rules={[{ required: true, message: 'Prioritas harus diisi' }]}>
+                                <Radio.Group buttonStyle="solid">
+                                    <Radio.Button value={1}>1-2 Kali Rusak</Radio.Button>
+                                    <Radio.Button value={2}>4-5 Kali Rusak</Radio.Button>
+                                    <Radio.Button value={3}>Diatas 5 Kali Rusak</Radio.Button>
+                                </Radio.Group>
                             </Form.Item>
                         </Form>
                     </Modal>

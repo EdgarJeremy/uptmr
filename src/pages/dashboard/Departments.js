@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Space, Button, Modal, Input, Form } from 'antd';
+import { Table, Space, Button, Modal, Input, Form, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
 
@@ -19,6 +19,7 @@ export default class Departments extends React.Component {
 
     fetch() {
         const { models } = this.props;
+        this.setState({ ready: false });
         models.Department.collection({
             attributes: ['id', 'name']
         }).then((data) => {
@@ -29,8 +30,12 @@ export default class Departments extends React.Component {
     onAdd() {
         const { models } = this.props;
         this.form.validateFields(['name']).then((values) => {
-            models.Department.create(values).then((department) => this.setState({ addPopup: false }));
+            models.Department.create(values).then((department) => this.setState({ addPopup: false })).then(() => this.fetch());
         }).catch((err) => { });
+    }
+
+    onDelete(r) {
+        r.delete().then(() => this.fetch());
     }
 
     render() {
@@ -47,8 +52,9 @@ export default class Departments extends React.Component {
                             key="action"
                             render={(text, record) => (
                                 <Space size="middle">
-                                    <a>Invite {record.lastName}</a>
-                                    <a>Delete</a>
+                                    <Popconfirm placement="top" title="Hapus item ini?" okText="Ya" cancelText="Tidak" onConfirm={() => this.onDelete(record)}>
+                                        <a>Delete</a>
+                                    </Popconfirm>
                                 </Space>
                             )}
                         />

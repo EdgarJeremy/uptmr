@@ -6,7 +6,10 @@ import Login from './pages/Login';
 import Dashboard from './pages/dashboard/Dashboard';
 import Loading from './components/Loading';
 
-const adapter = new SiriusAdapter('http://localhost', 1234, localStorage);
+const host = process.env.REACT_APP_API_HOST;
+const port = process.env.REACT_APP_API_PORT;
+
+const adapter = new SiriusAdapter(host, port, localStorage);
 
 class App extends React.Component {
 

@@ -55,4 +55,42 @@
   font-weight: bold;
   color: #ffffff;
   font-size: 20px;
+  display: inline-block;
+  float: left;
+}
+
+.user-info {
+  text-align: center;
+  padding-top: 20px;
+}
+
+code {
+  background-color: #fd79a8;
+  color: #ffffff;
+  padding: 2px;
+  border-radius: 2px;
+}
+
+#tele_code {
+  font-size: 50px;
+  text-align: center;
+  margin: 0;
+}
+
+table ul {
+  margin: 0;
+  padding: 0;
+}
+
+.questionnaire-items {
+  padding: 20px;
+  background-color: #f0f0f0;
+  margin-top: 20px;
+  border: 1px dashed grey;
+}
+
+.questionnaire-option {
+  display: block !important;
+  height: 30px !important;
+  line-height: 30px !important;
 }
