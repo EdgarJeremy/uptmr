@@ -94,3 +94,25 @@ table ul {
   height: 30px !important;
   line-height: 30px !important;
 }
+
+.dashboard-content {
+  margin: 0 24px;
+}
+.dashboard-content .ant-table {
+  overflow: scroll;
+}
+
+@media screen and (max-width: 600px) {
+  .dashboard-layout {
+    flex-direction: column !important;
+  }
+  .dashboard-content {
+    margin: 0;
+    margin-top: 30px;
+  }
+  .side-nav {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+  }
+}

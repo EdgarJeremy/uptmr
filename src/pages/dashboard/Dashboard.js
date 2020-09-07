@@ -66,8 +66,8 @@ export default class Dashboard extends React.Component {
                             <Breadcrumb.Item>List</Breadcrumb.Item>
                             <Breadcrumb.Item>App</Breadcrumb.Item>
                         </Breadcrumb> */}
-                            <Layout className="site-layout-background" style={{ padding: '24px 0' }}>
-                                <Sider className="site-layout-background" width={300}>
+                            <Layout className="site-layout-background dashboard-layout" style={{ padding: '24px 0' }}>
+                                <Sider className="site-layout-background side-nav" width={300}>
                                     <Menu
                                         mode="inline"
                                         defaultSelectedKeys={['1']}
@@ -120,7 +120,7 @@ export default class Dashboard extends React.Component {
                                     </SubMenu> */}
                                     </Menu>
                                 </Sider>
-                                <Content style={{ padding: '0 24px' }}>
+                                <Content className="dashboard-content">
                                     {user.type === 'Administrator' ? (
                                         <Switch>
                                             <Route exact path={`${path}/`} render={(p) => <Departments {...p} models={models} user={user} />} />
