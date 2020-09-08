@@ -5,6 +5,7 @@ import './App.css';
 import Login from './pages/Login';
 import Dashboard from './pages/dashboard/Dashboard';
 import Loading from './components/Loading';
+import FrontPage from './components/FrontPage';
 
 const host = process.env.REACT_APP_API_HOST;
 const port = process.env.REACT_APP_API_PORT;
@@ -34,13 +35,14 @@ class App extends React.Component {
       ready ? (
         <Router>
           <Switch>
-            <Route exact path="/" render={(p) => <Login {...p} models={models} authProvider={authProvider} />} />
+            {/* <Route exact path="/" render={(p) => <Login {...p} models={models} authProvider={authProvider} />} /> */}
+            <Route exact path="/" render={(p) => <FrontPage {...p} models={models} authProvider={authProvider} />} />
             <Route path="/dashboard" render={(p) => <Dashboard {...p} models={models} authProvider={authProvider} />} />
           </Switch>
         </Router>
       ) : (
-        <Loading />
-      )
+          <Loading />
+        )
     )
   }
 

@@ -101,7 +101,38 @@ table ul {
 .dashboard-content .ant-table {
   overflow: scroll;
 }
-
+.logo-image {
+  text-align: center;
+  width: 100%;
+}
+.logo-image img {
+  width: 150px;
+  margin-bottom: 10px;
+}
+.login {
+  padding-top: 15px;
+  float: right;
+  background-color: #001429;
+}
+.front-section .ant-card-body {
+  display: inline-block;
+  width: 100%;
+}
+.front-section .ant-card-body .front-img {
+  display: inline-block;
+  float: left;
+  width: 30%;
+}
+.front-section .ant-card-body .front-desc {
+  display: inline-block;
+  float: right;
+  width: 70%;
+  padding: 0 20px;
+}
+.front-content {
+  margin-top: 64px;
+  padding: 0 50px;
+}
 @media screen and (max-width: 600px) {
   .dashboard-layout {
     flex-direction: column !important;
@@ -114,5 +145,25 @@ table ul {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 100% !important;
+  }
+  .login {
+    padding-left: 40px;
+    padding-bottom: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+  .front-content {
+    margin-top: 150px;
+    padding: 0;
+  }
+  .front-section .ant-card-body .front-img {
+    float: none;
+    width: 100%;
+  }
+  .front-section .ant-card-body .front-desc {
+    float: none;
+    width: 100%;
+    padding: 0;
+    margin-top: 20px;
   }
 }
