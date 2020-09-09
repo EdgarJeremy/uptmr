@@ -35,8 +35,8 @@ class App extends React.Component {
       ready ? (
         <Router>
           <Switch>
-            {/* <Route exact path="/" render={(p) => <Login {...p} models={models} authProvider={authProvider} />} /> */}
             <Route exact path="/" render={(p) => <FrontPage {...p} models={models} authProvider={authProvider} />} />
+            <Route path="/login" render={(p) => <Login {...p} models={models} authProvider={authProvider} />} />
             <Route path="/dashboard" render={(p) => <Dashboard {...p} models={models} authProvider={authProvider} />} />
           </Switch>
         </Router>

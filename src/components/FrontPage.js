@@ -16,6 +16,7 @@ export default class FrontPage extends React.Component {
     }
 
     render() {
+        const { history } = this.props;
         return (
             <div>
                 <Layout>
@@ -23,36 +24,12 @@ export default class FrontPage extends React.Component {
                         <div className="logo">
                             Sistem Manajemen UPT-M&R
                         </div>
-                        <div className="login">
-                            <Form
-                                layout="inline"
-                                name="basic"
-                                onFinish={this.onFinish.bind(this)}
-                            >
-                                <Form.Item
-                                    name="username"
-                                    rules={[{ required: true, message: 'Isi username' }]}
-                                >
-                                    <Input size="small" placeholder="Username" />
-                                </Form.Item>
-
-                                <Form.Item
-                                    name="password"
-                                    rules={[{ required: true, message: 'Isi password' }]}
-                                >
-                                    <Input.Password size="small" placeholder="Password" />
-                                </Form.Item>
-
-                                <Form.Item>
-                                    <Button size="small" type="primary" htmlType="submit">
-                                        <LoginOutlined />
-                                    </Button>
-                                </Form.Item>
-                            </Form>
-                        </div>
-                        {/* <Menu className="front-menu" theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-                            <Menu.Item key="1">Login</Menu.Item>
-                        </Menu> */}
+                        {/* <div className="login">
+                            <Button size="small"><LoginOutlined /></Button>
+                        </div> */}
+                        <Menu className="front-menu" theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
+                            <Menu.Item key="1" onClick={() => history.replace('/login')}>Login</Menu.Item>
+                        </Menu>
                     </Header>
                     <Content className="site-layout front-content">
                         <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>

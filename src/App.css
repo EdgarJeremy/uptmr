@@ -114,6 +114,9 @@ table ul {
   float: right;
   background-color: #001429;
 }
+.front-menu li {
+  float: right;
+}
 .front-section .ant-card-body {
   display: inline-block;
   width: 100%;

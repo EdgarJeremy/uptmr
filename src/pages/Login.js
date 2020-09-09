@@ -31,7 +31,7 @@ export default class Login extends React.Component {
         return (
             ready ? (
                 <div className="login-container">
-                    <h1>UPTM&R</h1>
+                    <h1>Login Sistem</h1>
                     <Form
                         layout="vertical"
                         name="basic"
@@ -59,6 +59,7 @@ export default class Login extends React.Component {
         </Button>
                         </Form.Item>
                     </Form>
+                    <a href="/">kembali ke halaman publik</a>
                 </div>
             ) : <Loading />
         )
