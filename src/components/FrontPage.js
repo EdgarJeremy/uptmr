@@ -28,7 +28,7 @@ export default class FrontPage extends React.Component {
                             <Button size="small"><LoginOutlined /></Button>
                         </div> */}
                         <Menu className="front-menu" theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-                            <Menu.Item key="1" onClick={() => history.replace('/login')}>Login</Menu.Item>
+                            <Menu.Item key="1" onClick={() => history.replace('/login')}><LoginOutlined /> <span className="log-text">Login</span></Menu.Item>
                         </Menu>
                     </Header>
                     <Content className="site-layout front-content">

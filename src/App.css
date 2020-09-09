@@ -137,6 +137,9 @@ table ul {
   padding: 0 50px;
 }
 @media screen and (max-width: 600px) {
+  .logo {
+    font-size: 12px;
+  }
   .dashboard-layout {
     flex-direction: column !important;
   }
@@ -168,5 +171,11 @@ table ul {
     width: 100%;
     padding: 0;
     margin-top: 20px;
+  }
+  .front-menu span {
+    margin-right: 0 !important;
+  }
+  .log-text {
+    display: none;
   }
 }
