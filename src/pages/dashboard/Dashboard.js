@@ -81,7 +81,7 @@ export default class Dashboard extends React.Component {
                                             <Tag icon={<InfoCircleOutlined />} color="gold">{user.type === 'Department' ? 'Departemen' : user.type}</Tag>
                                             {user.type === 'Department' && <Tag icon={<PartitionOutlined />} color="green">{user.department.name}</Tag>}
                                             <div style={{ marginTop: 10, marginBottom: 10, display: 'block' }} />
-                                            {user.type !== 'Administrator' ? null : (user.telegram_chat_id ? (
+                                            {user.type == 'Administrator' ? null : (user.telegram_chat_id ? (
                                                 <Button icon={<CheckCircleOutlined />} style={{ backgroundColor: '#2ecc71', border: 'none' }} type="primary">Notifikasi Aktif</Button>
                                             ) : (
                                                     <Button type="primary" icon={<AlertOutlined />} onClick={() => this.setState({ telegram_code_popup: true })}>Aktifkan Notifikasi</Button>
