@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { Layout, Menu, Avatar, Divider, Typography, Tag, Button, Modal } from 'antd';
-import { UserOutlined, PartitionOutlined, MenuOutlined, InboxOutlined, ContainerOutlined, InfoCircleOutlined, CloseSquareOutlined, LogoutOutlined, AlertOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { UserOutlined, PartitionOutlined, MenuOutlined, InboxOutlined, ContainerOutlined, InfoCircleOutlined, CloseSquareOutlined, LogoutOutlined, AlertOutlined, CheckCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import Departments from './Departments';
 import Users from './Users';
 import Loading from '../../components/Loading';
@@ -10,6 +10,7 @@ import Done from './Done';
 import Inbox from './Inbox';
 import Rejected from './Rejected';
 import Archive from './Archive';
+import Letters from './Letters';
 
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
@@ -40,7 +41,7 @@ export default class Dashboard extends React.Component {
     onLogout() {
         const { authProvider, history } = this.props;
         authProvider.remove().then(() => {
-            history.replace('/');
+            history.replace('/login');
         });
     }
 
@@ -55,7 +56,7 @@ export default class Dashboard extends React.Component {
                 <div>
                     <Layout>
                         <Header className="header">
-                            <div className="logo">UPTM&R</div>
+                            <div className="logo">Sistem Manajemen UPTM&R</div>
                             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']} style={{ textAlign: 'right' }}>
                                 <Menu.Item icon={<LogoutOutlined />} key="1" onClick={this.onLogout.bind(this)}>Logout</Menu.Item>
                             </Menu>
@@ -103,6 +104,7 @@ export default class Dashboard extends React.Component {
                                                         <SubMenu icon={<MenuOutlined />} key="sub1" title="Menu">
                                                             <Menu.Item icon={<InboxOutlined />} key="1" onClick={() => this.goTo('/')} active={currentPage === ''}>Laporan Masuk</Menu.Item>
                                                             <Menu.Item icon={<ContainerOutlined />} key="2" onClick={() => this.goTo('/archive')} active={currentPage === 'archive'}>Arsip</Menu.Item>
+                                                            <Menu.Item icon={<FileTextOutlined />} key="3" onClick={() => this.goTo('/letters')} active={currentPage === 'letters'}>Surat</Menu.Item>
                                                         </SubMenu>
                                                     )
                                             )}
@@ -137,6 +139,7 @@ export default class Dashboard extends React.Component {
                                                     <Switch>
                                                         <Route exact path={`${path}/`} render={(p) => <Inbox {...p} models={models} user={user} />} />
                                                         <Route exact path={`${path}/archive`} render={(p) => <Archive {...p} models={models} user={user} />} />
+                                                        <Route exact path={`${path}/letters`} render={(p) => <Letters {...p} models={models} user={user} />} />
                                                     </Switch>
                                                 )
                                         )}

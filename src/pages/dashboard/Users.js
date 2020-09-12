@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Space, Button, Modal, Input, Form, Popconfirm, Select } from 'antd';
+import { Table, Space, Button, Modal, Input, Form, Popconfirm, Select, Checkbox } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
 
@@ -39,7 +39,8 @@ export default class Users extends React.Component {
 
     onAdd() {
         const { models } = this.props;
-        this.form.validateFields(['name', 'username', 'password', 'type', 'target_id', 'department_id']).then((values) => {
+        this.form.validateFields(['name', 'username', 'password', 'type', 'target_id', 'department_id', 'letter_admin']).then((values) => {
+            console.log(values);
             values.department_id = values.type === 'Department' ? values.department_id : null;
             values.target_id = values.type === 'UPT' ? values.target_id : null;
             models.User.create(values).then((user) => this.setState({ addPopup: false })).then(() => this.fetch());
@@ -150,6 +151,15 @@ export default class Users extends React.Component {
                                             <Select.Option key={i} value={d.id}>{d.name}</Select.Option>
                                         ))}
                                     </Select>
+                                </Form.Item>
+                            )}
+                            {this.state.type === 'UPT' && (
+                                <Form.Item
+                                    name="letter_admin"
+                                    wrapperCol={{ offset: 8, span: 16 }}
+                                    valuePropName="checked"
+                                >
+                                    <Checkbox>Tandai Pengurus Surat</Checkbox>
                                 </Form.Item>
                             )}
                         </Form>

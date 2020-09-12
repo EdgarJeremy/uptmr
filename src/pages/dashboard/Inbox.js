@@ -110,11 +110,14 @@ export default class Inbox extends React.Component {
                         <Column title="Ruang" dataIndex="room" key="room" />
                         <Column title="Pemohon" key="user.name" render={(r) => r.user.name} />
                         <Column title="Departemen" key="department.name" render={(r) => r.department.name} />
+                        <Column title="PDF Laporan" key="report_file" render={(r) => (
+                            <a target="_blank" href={host + ':' + port + '/report_file/' + r.id}>PDF</a>
+                        )} />
                         <Column title="File" key="done" render={(r) => {
                             return (
-                                <ul>
+                                <ul style={{ listStyleType: 'none' }}>
                                     {r.files.map((f, i) => (
-                                        <li key={i}><a target="_blank" href={host + ':' + port + '/file/' + f.id}>foto {i + 1}</a></li>
+                                        <li key={i}><a target="_blank" href={host + ':' + port + '/file/' + f.id}>#{i + 1}</a></li>
                                     ))}
                                 </ul>
                             )

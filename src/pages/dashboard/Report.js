@@ -16,6 +16,7 @@ export default class Report extends React.Component {
         addPopup: false,
         data: null,
         files: [],
+        report_file: null,
         urgency: null,
         questionnairePopup: false
     }
@@ -48,12 +49,13 @@ export default class Report extends React.Component {
     }
 
     onAdd() {
-        const { files } = this.state;
+        const { files, report_file } = this.state;
         const { models } = this.props;
         this.form.validateFields(['description', 'since', 'room', 'files', 'urgency', 'qs']).then((values) => {
-            console.log(values)
             delete values.files;
+            delete values.report_file;
             values.files = files;
+            values.report_file = report_file;
             values.questionnaire = values.qs.questionnaire;
             values.urgency = values.qs.urgency;
             delete values.qs;
@@ -85,6 +87,12 @@ export default class Report extends React.Component {
             }
             reader.readAsDataURL(file);
         });
+    }
+
+    async onChangeReport(e) {
+        const { files } = e.target;
+        const report_file = await this.getBase64(files[0]);
+        this.setState({ report_file });
     }
 
     render() {
@@ -152,6 +160,12 @@ export default class Report extends React.Component {
                                 name="files"
                                 rules={[{ required: true, message: 'Foto bukti harus diisi' }]}>
                                 <input type="file" multiple onChange={this.onChangeFile.bind(this)} accept="image/png,image/jpg,image/jpeg" />
+                            </Form.Item>
+                            <Form.Item
+                                label="PDF Laporan"
+                                name="report_file"
+                                rules={[{ required: true, message: 'PDF harus diisi' }]}>
+                                <input type="file" multiple onChange={this.onChangeReport.bind(this)} accept="application/pdf" />
                             </Form.Item>
                             <Form.Item
                                 label="Kuisioner"
