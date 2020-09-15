@@ -101,7 +101,7 @@ export default class Report extends React.Component {
         return (
             ready ? (
                 <div>
-                    <h3>Laporan Dikirim</h3>
+                    <h3>Pengaduan Dikirim</h3>
                     <Button type="primary" icon={<PlusOutlined />} onClick={() => this.setState({ addPopup: true })}>Tambah</Button><br /><br />
                     <Table dataSource={data.rows}>
                         <Column title="Tanggal Kerusakan" key="since" render={(r) => moment(r.since).format('Do MMMM YYYY')} />
@@ -124,7 +124,7 @@ export default class Report extends React.Component {
                         />
                     </Table>
                     <Modal
-                        title="Buat Laporan"
+                        title="Buat Pengaduan"
                         visible={addPopup}
                         onOk={this.onAdd.bind(this)}
                         onCancel={() => this.setState({ addPopup: false })}

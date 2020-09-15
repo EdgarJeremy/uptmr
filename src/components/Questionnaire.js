@@ -8,6 +8,7 @@ export default class Questionnaire extends React.Component {
     state = {
         popup: false,
         current: 0,
+        urgency: null,
         data: {
             breakage: null,
             availability: null,
@@ -41,12 +42,12 @@ export default class Questionnaire extends React.Component {
             urgency,
             questionnaire: data
         }
-        this.setState({ popup: false });
+        this.setState({ popup: false, urgency });
         this.props.onChange && this.props.onChange(payload);
     }
 
     render() {
-        const { popup, current, data } = this.state;
+        const { popup, current, data, urgency } = this.state;
         const qs = [
             <div className="questionnaire-item">
                 <h3>Seperti apa kerusakan yang terjadi?</h3>
@@ -84,7 +85,7 @@ export default class Questionnaire extends React.Component {
         ]
         return (
             <div>
-                <Button type="primary" icon={<FormOutlined />} onClick={() => this.setState({ popup: true })}>Isi Kuisioner</Button>
+                <Button type="primary" icon={<FormOutlined />} onClick={() => this.setState({ popup: true })}>{urgency ? `Bobot : ${urgency}` : 'Isi Kuisioner'}</Button>
                 <Modal
                     width={1000}
                     title="Isi Kuisioner"

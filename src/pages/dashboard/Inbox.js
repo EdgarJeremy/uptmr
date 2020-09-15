@@ -1,10 +1,11 @@
 import React from 'react';
-import { Table, Space, Button, Modal, Input, Form, Popconfirm, DatePicker, Tag, Radio } from 'antd';
+import { Table, Space, Button, Modal, Input, Form, Popconfirm, DatePicker, Tag, Radio, Select } from 'antd';
 import moment from 'moment';
 import { PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
 
 import 'moment/locale/id';
+import Questionnaire from '../../components/Questionnaire';
 
 const { Column } = Table;
 
@@ -17,8 +18,11 @@ export default class Inbox extends React.Component {
         ready: false,
         addPopup: false,
         data: null,
+        report_file: null,
         files: [],
-        urgency: null
+        urgency: null,
+        questionnairePopup: false,
+        departments: null
     }
 
     componentDidMount() {
@@ -49,18 +53,13 @@ export default class Inbox extends React.Component {
             }],
             order: [['urgency', 'desc'], ['created_at', 'asc']]
         }).then((data) => {
-            this.setState({ ready: true, data });
+            this.setState({ data });
+            return models.Department.collection({
+                attributes: ['id', 'name']
+            })
+        }).then((departments) => {
+            this.setState({ ready: true, departments });
         });
-    }
-
-    onAdd() {
-        const { files } = this.state;
-        const { models } = this.props;
-        this.form.validateFields(['description', 'since', 'room', 'files', 'urgency']).then((values) => {
-            delete values.files;
-            values.files = files;
-            models.Report.create(values).then((report) => this.setState({ addPopup: false })).then(() => this.fetch());
-        }).catch((err) => { });
     }
 
     onApprove(r) {
@@ -72,6 +71,21 @@ export default class Inbox extends React.Component {
         if (rejection_note) {
             r.update({ rejection_note }).then(() => this.fetch());
         }
+    }
+
+    onAdd() {
+        const { files, report_file } = this.state;
+        const { models } = this.props;
+        this.form.validateFields(['description', 'since', 'room', 'files', 'urgency', 'department_id', 'qs']).then((values) => {
+            delete values.files;
+            delete values.report_file;
+            values.files = files;
+            values.report_file = report_file;
+            values.questionnaire = values.qs.questionnaire;
+            values.urgency = values.qs.urgency;
+            delete values.qs;
+            models.Report.create(values).then((report) => this.setState({ addPopup: false })).then(() => this.fetch());
+        }).catch((err) => { });
     }
 
     async onChangeFile(e) {
@@ -96,12 +110,20 @@ export default class Inbox extends React.Component {
         });
     }
 
+    async onChangeReport(e) {
+        const { files } = e.target;
+        const report_file = await this.getBase64(files[0]);
+        this.setState({ report_file });
+    }
+
     render() {
-        const { ready, data, addPopup } = this.state;
+        const { ready, data, addPopup, departments } = this.state;
+        const { models } = this.props;
         return (
             ready ? (
                 <div>
-                    <h3>Laporan Masuk</h3>
+                    <h3>Pengaduan Masuk</h3>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => this.setState({ addPopup: true })}>Tambah</Button><br /><br />
                     <Table dataSource={data.rows}>
                         <Column title="Tanggal Kerusakan" key="since" render={(r) => moment(r.since).format('Do MMMM YYYY')} />
                         <Column title="Tanggal Kirim" key="created_at" render={(r) => moment(r.created_at).format('Do MMMM YYYY, h:mm:ss a')} />
@@ -137,6 +159,69 @@ export default class Inbox extends React.Component {
                             )}
                         />
                     </Table>
+                    <Modal
+                        title="Buat Pengaduan"
+                        visible={addPopup}
+                        onOk={this.onAdd.bind(this)}
+                        onCancel={() => this.setState({ addPopup: false })}
+                    >
+                        <Form
+                            ref={(form) => this.form = form}
+                            name="newReport"
+                            layout="vertical"
+                        >
+                            <Form.Item
+                                label="Deskripsi"
+                                name="description"
+                                rules={[{ required: true, message: 'Deskripsi harus diisi' }]}
+                            >
+                                <Input.TextArea rows={5} />
+                            </Form.Item>
+                            <Form.Item
+                                label="Ruangan"
+                                name="room"
+                                rules={[{ required: true, message: 'Ruangan harus diisi' }]}
+                            >
+                                <Input />
+                            </Form.Item>
+                            <Form.Item
+                                label="Tanggal Kerusakan"
+                                name="since"
+                                rules={[{ required: true, message: 'Tanggal kerusakan harus diisi ' }]}
+                            >
+                                <DatePicker />
+                            </Form.Item>
+                            <Form.Item
+                                label="Foto Bukti Kerusakan"
+                                name="files"
+                                rules={[{ required: true, message: 'Foto bukti harus diisi' }]}>
+                                <input type="file" multiple onChange={this.onChangeFile.bind(this)} accept="image/png,image/jpg,image/jpeg" />
+                            </Form.Item>
+                            <Form.Item
+                                label="PDF Laporan"
+                                name="report_file"
+                                rules={[{ required: true, message: 'PDF harus diisi' }]}>
+                                <input type="file" multiple onChange={this.onChangeReport.bind(this)} accept="application/pdf" />
+                            </Form.Item>
+                            <Form.Item
+                                label="Departemen"
+                                name="department_id"
+                                rules={[{ required: true, message: 'Departemen harus diisi' }]}
+                            >
+                                <Select>
+                                    {departments.rows.map((d, i) => (
+                                        <Select.Option value={d.id} key={i}>{d.name}</Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                label="Kuisioner"
+                                name="qs"
+                                rules={[{ required: true, message: 'Kuisioner harus diisi' }]}>
+                                <Questionnaire models={models} />
+                            </Form.Item>
+                        </Form>
+                    </Modal>
                 </div>
             ) : <Loading marginTop={100} />
         )
