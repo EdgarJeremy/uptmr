@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { Layout, Menu, Avatar, Divider, Typography, Tag, Button, Modal } from 'antd';
+import { Layout, Menu, Avatar, Divider, Typography, Tag, Button, Modal, Badge } from 'antd';
 import { UserOutlined, PartitionOutlined, MenuOutlined, InboxOutlined, ContainerOutlined, InfoCircleOutlined, CloseSquareOutlined, LogoutOutlined, AlertOutlined, CheckCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import Departments from './Departments';
 import Users from './Users';
@@ -20,13 +20,24 @@ export default class Dashboard extends React.Component {
     state = {
         ready: false,
         user: null,
-        telegram_code_popup: false
+        telegram_code_popup: false,
+        counts: {
+            inbox: null,
+            done: null,
+            rejected: null
+        }
     }
 
     componentDidMount() {
         const { authProvider, history } = this.props;
         authProvider.get().then((user) => {
-            this.setState({ user, ready: true });
+            this.setState({ user, ready: true }, () => {
+                if (user.type === 'UPT') {
+                    this.fetchInboxCount();
+                }
+                this.fetchDoneCount();
+                this.fetchRejectedCount();
+            });
         }).catch((err) => {
             history.replace('/');
         });
@@ -45,8 +56,65 @@ export default class Dashboard extends React.Component {
         });
     }
 
+    fetchInboxCount() {
+        const { user } = this.state;
+        const { models } = this.props;
+        models.Report.collection({
+            // attributes: ['id'],
+            where: {
+                rejection_note: null,
+                department_id: {
+                    $in: user.target_id
+                },
+                done: false,
+                read: false
+            },
+        }).then((data) => {
+            const { counts } = this.state;
+            counts.inbox = data.count;
+            this.setState({ counts });
+        });
+    }
+
+    fetchRejectedCount() {
+        const { user } = this.state;
+        const { models } = this.props;
+        models.Report.collection({
+            // attributes: ['id'],
+            where: {
+                rejection_note: {
+                    $ne: null
+                },
+                department_id: user.department_id,
+                done: false,
+                read: false
+            },
+        }).then((data) => {
+            const { counts } = this.state;
+            counts.rejected = data.count;
+            this.setState({ counts });
+        });
+    }
+
+    fetchDoneCount() {
+        const { user } = this.state;
+        const { models } = this.props;
+        models.Report.collection({
+            // attributes: ['id'],
+            where: {
+                department_id: user.department_id,
+                done: true,
+                read: false
+            },
+        }).then((data) => {
+            const { counts } = this.state;
+            counts.done = data.count;
+            this.setState({ counts });
+        });
+    }
+
     render() {
-        const { ready, user, telegram_code_popup } = this.state;
+        const { ready, user, telegram_code_popup, counts } = this.state;
         const { path } = this.props.match;
         const { models } = this.props;
         let currentPage = window.location.hash.split('/');
@@ -62,11 +130,6 @@ export default class Dashboard extends React.Component {
                             </Menu>
                         </Header>
                         <Content style={{ padding: '0 50px' }}>
-                            {/* <Breadcrumb style={{ margin: '16px 0' }}>
-                            <Breadcrumb.Item>Home</Breadcrumb.Item>
-                            <Breadcrumb.Item>List</Breadcrumb.Item>
-                            <Breadcrumb.Item>App</Breadcrumb.Item>
-                        </Breadcrumb> */}
                             <Layout className="site-layout-background dashboard-layout" style={{ padding: '24px 0' }}>
                                 <Sider className="site-layout-background side-nav" width={300}>
                                     <Menu
@@ -97,29 +160,23 @@ export default class Dashboard extends React.Component {
                                                 user.type === 'Department' ? (
                                                     <SubMenu icon={<MenuOutlined />} key="sub1" title="Menu">
                                                         <Menu.Item icon={<PartitionOutlined />} key="1" onClick={() => this.goTo('/')} active={currentPage === ''}>Pengaduan Dikirim</Menu.Item>
-                                                        <Menu.Item icon={<UserOutlined />} key="2" onClick={() => this.goTo('/done')} active={currentPage === 'done'}>Pengaduan Selesai</Menu.Item>
-                                                        <Menu.Item icon={<CloseSquareOutlined />} key="3" onClick={() => this.goTo('/rejected')} active={currentPage === 'rejected'}>Laporan Ditolak</Menu.Item>
+                                                        <Menu.Item icon={<UserOutlined />} key="2" onClick={() => this.goTo('/done')} active={currentPage === 'done'}>
+                                                            Pengaduan Selesai{' '}<Badge count={counts.done} />
+                                                        </Menu.Item>
+                                                        <Menu.Item icon={<CloseSquareOutlined />} key="3" onClick={() => this.goTo('/rejected')} active={currentPage === 'rejected'}>
+                                                            Laporan Ditolak{' '}<Badge count={counts.rejected} />
+                                                        </Menu.Item>
                                                     </SubMenu>
                                                 ) : (
                                                         <SubMenu icon={<MenuOutlined />} key="sub1" title="Menu">
-                                                            <Menu.Item icon={<InboxOutlined />} key="1" onClick={() => this.goTo('/')} active={currentPage === ''}>Pengaduan Masuk</Menu.Item>
+                                                            <Menu.Item icon={<InboxOutlined />} key="1" onClick={() => this.goTo('/')} active={currentPage === ''}>
+                                                                Pengaduan Masuk{' '}<Badge count={counts.inbox} />
+                                                            </Menu.Item>
                                                             <Menu.Item icon={<ContainerOutlined />} key="2" onClick={() => this.goTo('/archive')} active={currentPage === 'archive'}>Arsip</Menu.Item>
                                                             <Menu.Item icon={<FileTextOutlined />} key="3" onClick={() => this.goTo('/letters')} active={currentPage === 'letters'}>Surat</Menu.Item>
                                                         </SubMenu>
                                                     )
                                             )}
-                                        {/* <SubMenu key="sub2" icon={<LaptopOutlined />} title="subnav 2">
-                                        <Menu.Item key="5">option5</Menu.Item>
-                                        <Menu.Item key="6">option6</Menu.Item>
-                                        <Menu.Item key="7">option7</Menu.Item>
-                                        <Menu.Item key="8">option8</Menu.Item>
-                                    </SubMenu>
-                                    <SubMenu key="sub3" icon={<NotificationOutlined />} title="subnav 3">
-                                        <Menu.Item key="9">option9</Menu.Item>
-                                        <Menu.Item key="10">option10</Menu.Item>
-                                        <Menu.Item key="11">option11</Menu.Item>
-                                        <Menu.Item key="12">option12</Menu.Item>
-                                    </SubMenu> */}
                                     </Menu>
                                 </Sider>
                                 <Content className="dashboard-content">
@@ -132,12 +189,12 @@ export default class Dashboard extends React.Component {
                                             user.type === 'Department' ? (
                                                 <Switch>
                                                     <Route exact path={`${path}/`} render={(p) => <Report {...p} models={models} user={user} />} />
-                                                    <Route exact path={`${path}/done`} render={(p) => <Done {...p} models={models} user={user} />} />
-                                                    <Route exact path={`${path}/rejected`} render={(p) => <Rejected {...p} models={models} user={user} />} />
+                                                    <Route exact path={`${path}/done`} render={(p) => <Done updateCount={this.fetchDoneCount.bind(this)} {...p} models={models} user={user} />} />
+                                                    <Route exact path={`${path}/rejected`} render={(p) => <Rejected updateCount={this.fetchRejectedCount.bind(this)} {...p} models={models} user={user} />} />
                                                 </Switch>
                                             ) : (
                                                     <Switch>
-                                                        <Route exact path={`${path}/`} render={(p) => <Inbox {...p} models={models} user={user} />} />
+                                                        <Route exact path={`${path}/`} render={(p) => <Inbox {...p} updateCount={this.fetchInboxCount.bind(this)} models={models} user={user} />} />
                                                         <Route exact path={`${path}/archive`} render={(p) => <Archive {...p} models={models} user={user} />} />
                                                         <Route exact path={`${path}/letters`} render={(p) => <Letters {...p} models={models} user={user} />} />
                                                     </Switch>

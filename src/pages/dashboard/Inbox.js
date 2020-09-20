@@ -26,11 +26,13 @@ export default class Inbox extends React.Component {
     }
 
     componentDidMount() {
+        const { models, updateCount } = this.props;
+        models.Report.$http('reports/update_read_inbox', 'GET').then(() => updateCount && updateCount());
         this.fetch();
     }
 
     fetch() {
-        const { models, user } = this.props;
+        const { models, user, onCount } = this.props;
         this.setState({ ready: false });
         models.Report.collection({
             attributes: ['id', 'description', 'urgency', 'room', 'since', 'done', 'created_at'],
@@ -63,13 +65,13 @@ export default class Inbox extends React.Component {
     }
 
     onApprove(r) {
-        r.update({ done: true }).then(() => this.fetch());
+        r.update({ done: true, read: false }).then(() => this.fetch()).then(() => this.props.updateCount());
     }
 
     onReject(r) {
         const rejection_note = window.prompt('Masukkan alasan penolakkan');
         if (rejection_note) {
-            r.update({ rejection_note }).then(() => this.fetch());
+            r.update({ rejection_note, read: false }).then(() => this.fetch()).then(() => this.props.updateCount());
         }
     }
 
@@ -135,7 +137,7 @@ export default class Inbox extends React.Component {
                         <Column title="PDF Laporan" key="report_file" render={(r) => (
                             <a target="_blank" href={host + ':' + port + '/report_file/' + r.id}>PDF</a>
                         )} />
-                        <Column title="File" key="done" render={(r) => {
+                        <Column title="Foto" key="done" render={(r) => {
                             return (
                                 <ul style={{ listStyleType: 'none' }}>
                                     {r.files.map((f, i) => (

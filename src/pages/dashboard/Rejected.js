@@ -19,6 +19,8 @@ export default class Rejected extends React.Component {
     }
 
     componentDidMount() {
+        const { models, updateCount } = this.props;
+        models.Report.$http('reports/update_read_rejected', 'GET').then(() => updateCount && updateCount());
         this.fetch();
     }
 

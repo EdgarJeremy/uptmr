@@ -19,6 +19,9 @@ export default class Done extends React.Component {
     }
 
     componentDidMount() {
+        const { models, updateCount } = this.props;
+        models.Report.$http('reports/update_read_done', 'GET').then(() => updateCount && updateCount());
+        console.log(models.Report.$http);
         this.fetch();
     }
 
