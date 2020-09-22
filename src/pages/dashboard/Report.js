@@ -55,7 +55,6 @@ export default class Report extends React.Component {
             delete values.files;
             delete values.report_file;
             values.files = files;
-            values.report_file = report_file;
             values.questionnaire = values.qs.questionnaire;
             values.urgency = values.qs.urgency;
             delete values.qs;
@@ -160,12 +159,6 @@ export default class Report extends React.Component {
                                 name="files"
                                 rules={[{ required: true, message: 'Foto bukti harus diisi' }]}>
                                 <input type="file" multiple onChange={this.onChangeFile.bind(this)} accept="image/png,image/jpg,image/jpeg" />
-                            </Form.Item>
-                            <Form.Item
-                                label="PDF Laporan"
-                                name="report_file"
-                                rules={[{ required: true, message: 'PDF harus diisi' }]}>
-                                <input type="file" multiple onChange={this.onChangeReport.bind(this)} accept="application/pdf" />
                             </Form.Item>
                             <Form.Item
                                 label="Kuisioner"

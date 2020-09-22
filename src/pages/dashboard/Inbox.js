@@ -3,6 +3,7 @@ import { Table, Space, Button, Modal, Input, Form, Popconfirm, DatePicker, Tag, 
 import moment from 'moment';
 import { PlusOutlined } from '@ant-design/icons';
 import Loading from '../../components/Loading';
+import PreviewPDF from '../../components/PreviewPDF';
 
 import 'moment/locale/id';
 import Questionnaire from '../../components/Questionnaire';
@@ -22,7 +23,8 @@ export default class Inbox extends React.Component {
         files: [],
         urgency: null,
         questionnairePopup: false,
-        departments: null
+        departments: null,
+        selected: null
     }
 
     componentDidMount() {
@@ -80,9 +82,7 @@ export default class Inbox extends React.Component {
         const { models } = this.props;
         this.form.validateFields(['description', 'since', 'room', 'files', 'urgency', 'department_id', 'qs']).then((values) => {
             delete values.files;
-            delete values.report_file;
             values.files = files;
-            values.report_file = report_file;
             values.questionnaire = values.qs.questionnaire;
             values.urgency = values.qs.urgency;
             delete values.qs;
@@ -112,14 +112,8 @@ export default class Inbox extends React.Component {
         });
     }
 
-    async onChangeReport(e) {
-        const { files } = e.target;
-        const report_file = await this.getBase64(files[0]);
-        this.setState({ report_file });
-    }
-
     render() {
-        const { ready, data, addPopup, departments } = this.state;
+        const { ready, data, addPopup, departments, selected } = this.state;
         const { models } = this.props;
         return (
             ready ? (
@@ -129,19 +123,19 @@ export default class Inbox extends React.Component {
                     <Table dataSource={data.rows}>
                         <Column title="Tanggal Kerusakan" key="since" render={(r) => moment(r.since).format('Do MMMM YYYY')} />
                         <Column title="Tanggal Kirim" key="created_at" render={(r) => moment(r.created_at).format('Do MMMM YYYY, h:mm:ss a')} />
-                        <Column title="Bobot SAW" key="urgency" dataIndex="urgency" />
+                        <Column title="Bobot SAW" key="urgency" render={(r) => parseFloat(r.urgency).toPrecision(5)} />
                         <Column title="Deskripsi" dataIndex="description" key="description" />
                         <Column title="Ruang" dataIndex="room" key="room" />
                         <Column title="Pemohon" key="user.name" render={(r) => r.user.name} />
                         <Column title="Departemen" key="department.name" render={(r) => r.department.name} />
-                        <Column title="PDF Laporan" key="report_file" render={(r) => (
-                            <a target="_blank" href={host + ':' + port + '/report_file/' + r.id}>PDF</a>
+                        <Column title="PDF Usulan" key="report_file" render={(r) => (
+                            <a onClick={() => this.setState({ selected: r.id })}>PDF</a>
                         )} />
-                        <Column title="Foto" key="done" render={(r) => {
+                        <Column title="Foto Bukti" key="done" render={(r) => {
                             return (
                                 <ul style={{ listStyleType: 'none' }}>
                                     {r.files.map((f, i) => (
-                                        <li key={i}><a target="_blank" href={host + ':' + port + '/file/' + f.id}>#{i + 1}</a></li>
+                                        <li key={i}><a target="_blank" href={host + ':' + port + '/file/' + f.id}>#bukti-{f.id}/{i + 1}</a></li>
                                     ))}
                                 </ul>
                             )
@@ -200,12 +194,6 @@ export default class Inbox extends React.Component {
                                 <input type="file" multiple onChange={this.onChangeFile.bind(this)} accept="image/png,image/jpg,image/jpeg" />
                             </Form.Item>
                             <Form.Item
-                                label="PDF Laporan"
-                                name="report_file"
-                                rules={[{ required: true, message: 'PDF harus diisi' }]}>
-                                <input type="file" multiple onChange={this.onChangeReport.bind(this)} accept="application/pdf" />
-                            </Form.Item>
-                            <Form.Item
                                 label="Departemen"
                                 name="department_id"
                                 rules={[{ required: true, message: 'Departemen harus diisi' }]}
@@ -223,6 +211,17 @@ export default class Inbox extends React.Component {
                                 <Questionnaire models={models} />
                             </Form.Item>
                         </Form>
+                    </Modal>
+
+                    <Modal
+                        title="Preview Usulan"
+                        visible={selected}
+                        okButtonProps={{ style: { display: 'none' } }}
+                        cancelButtonProps={{ style: { display: 'none' } }}
+                        onCancel={() => this.setState({ selected: false })}
+                        width={1000}
+                    >
+                        {selected && <PreviewPDF id={selected} models={models} />}
                     </Modal>
                 </div>
             ) : <Loading marginTop={100} />

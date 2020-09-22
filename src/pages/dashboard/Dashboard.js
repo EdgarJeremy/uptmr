@@ -159,18 +159,18 @@ export default class Dashboard extends React.Component {
                                         ) : (
                                                 user.type === 'Department' ? (
                                                     <SubMenu icon={<MenuOutlined />} key="sub1" title="Menu">
-                                                        <Menu.Item icon={<PartitionOutlined />} key="1" onClick={() => this.goTo('/')} active={currentPage === ''}>Pengaduan Dikirim</Menu.Item>
+                                                        <Menu.Item icon={<PartitionOutlined />} key="1" onClick={() => this.goTo('/')} active={currentPage === ''}>Usulan Dikirim</Menu.Item>
                                                         <Menu.Item icon={<UserOutlined />} key="2" onClick={() => this.goTo('/done')} active={currentPage === 'done'}>
-                                                            Pengaduan Selesai{' '}<Badge count={counts.done} />
+                                                            Usulan Selesai{' '}<Badge count={counts.done} />
                                                         </Menu.Item>
                                                         <Menu.Item icon={<CloseSquareOutlined />} key="3" onClick={() => this.goTo('/rejected')} active={currentPage === 'rejected'}>
-                                                            Laporan Ditolak{' '}<Badge count={counts.rejected} />
+                                                            Usulan Ditolak{' '}<Badge count={counts.rejected} />
                                                         </Menu.Item>
                                                     </SubMenu>
                                                 ) : (
                                                         <SubMenu icon={<MenuOutlined />} key="sub1" title="Menu">
                                                             <Menu.Item icon={<InboxOutlined />} key="1" onClick={() => this.goTo('/')} active={currentPage === ''}>
-                                                                Pengaduan Masuk{' '}<Badge count={counts.inbox} />
+                                                                Usulan Masuk{' '}<Badge count={counts.inbox} />
                                                             </Menu.Item>
                                                             <Menu.Item icon={<ContainerOutlined />} key="2" onClick={() => this.goTo('/archive')} active={currentPage === 'archive'}>Arsip</Menu.Item>
                                                             <Menu.Item icon={<FileTextOutlined />} key="3" onClick={() => this.goTo('/letters')} active={currentPage === 'letters'}>Surat</Menu.Item>
