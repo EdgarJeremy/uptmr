@@ -33,6 +33,7 @@ export default class Archive extends React.Component {
             where: {
                 $or: [{
                     done: true,
+                    status: '3'
                 }, {
                     rejection_note: {
                         $ne: null
@@ -110,13 +111,7 @@ export default class Archive extends React.Component {
                     <Table dataSource={data.rows}>
                         <Column title="Tanggal Kerusakan" key="since" render={(r) => moment(r.since).format('Do MMMM YYYY')} />
                         <Column title="Tanggal Kirim" key="created_at" render={(r) => moment(r.created_at).format('Do MMMM YYYY, h:mm:ss a')} />
-                        <Column title="Prioritas" key="urgency" render={(r) => (
-                            <Tag color={r.urgency === 1 ? 'cyan' : (r.urgency === 2 ? 'orange' : 'red')}>
-                                {r.urgency === 1 ? '1-2 Kali Rusak' : (
-                                    r.urgency === 2 ? '4-5 Kali Rusak' : 'Diatas 5 Kali Rusak'
-                                )}
-                            </Tag>
-                        )} />
+                        <Column title="Bobot SAW" key="urgency" render={(r) => parseFloat(r.urgency).toPrecision(5)} />
                         <Column title="Deskripsi" dataIndex="description" key="description" />
                         <Column title="Ruang" dataIndex="room" key="room" />
                         <Column title="Pemohon" key="user.name" render={(r) => r.user.name} />

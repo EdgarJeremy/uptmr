@@ -66,7 +66,12 @@ export default class Dashboard extends React.Component {
                 department_id: {
                     $in: user.target_id
                 },
-                done: false,
+                done: {
+                    $or: [true, false]
+                },
+                status: {
+                    $or: ['1', '2']
+                },
                 read: false
             },
         }).then((data) => {
@@ -104,6 +109,7 @@ export default class Dashboard extends React.Component {
             where: {
                 department_id: user.department_id,
                 done: true,
+                status: '3',
                 read: false
             },
         }).then((data) => {

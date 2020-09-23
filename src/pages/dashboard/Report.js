@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, Space, Button, Modal, Input, Form, Popconfirm, DatePicker, Tag, Radio } from 'antd';
 import moment from 'moment';
 import { PlusOutlined } from '@ant-design/icons';
+import TrafficLight from 'react-trafficlight';
 import Loading from '../../components/Loading';
 
 import 'moment/locale/id';
@@ -29,11 +30,16 @@ export default class Report extends React.Component {
         const { models, user } = this.props;
         this.setState({ ready: false });
         models.Report.collection({
-            attributes: ['id', 'description', 'urgency', 'room', 'since', 'done', 'created_at'],
+            attributes: ['id', 'description', 'urgency', 'room', 'since', 'done', 'status', 'created_at'],
             where: {
                 rejection_note: null,
                 department_id: user.department_id,
-                done: false
+                done: {
+                    $or: [true, false]
+                },
+                status: {
+                    $or: ['1', '2']
+                }
             },
             include: [{
                 model: 'User',
@@ -105,11 +111,23 @@ export default class Report extends React.Component {
                     <Table dataSource={data.rows}>
                         <Column title="Tanggal Kerusakan" key="since" render={(r) => moment(r.since).format('Do MMMM YYYY')} />
                         <Column title="Tanggal Kirim" key="created_at" render={(r) => moment(r.created_at).format('Do MMMM YYYY, h:mm:ss a')} />
-                        <Column title="Bobot SAW" key="urgency" dataIndex="urgency" />
+                        <Column title="Bobot SAW" key="urgency" render={(r) => parseFloat(r.urgency).toPrecision(5)} />
                         <Column title="Deskripsi" dataIndex="description" key="description" />
                         <Column title="Ruang" dataIndex="room" key="room" />
                         <Column title="Pemohon" key="user.name" render={(r) => r.user.name} />
-                        <Column title="Status" key="done" render={(r) => r.done ? <Tag color="green">Selesai</Tag> : <Tag color="blue">Dalam Proses</Tag>} />
+                        <Column title="Status" key="done" render={(r) => (
+                            r.done ? (
+                                <TrafficLight
+                                    Horizontal
+                                    RedOn={r.status == 1}
+                                    YellowOn={r.status == 2}
+                                    GreenOn={r.status == 3}
+                                    // style={{height: 40}}
+                                />
+                            ) : (
+                                    <Tag color="red">Belum disetujui</Tag>
+                                )
+                        )} />
                         <Column
                             title="Action"
                             key="action"

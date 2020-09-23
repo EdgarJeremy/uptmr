@@ -9464,6 +9464,11 @@ react-scripts@3.4.3:
   optionalDependencies:
     fsevents "2.1.2"
 
+react-trafficlight@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/react-trafficlight/-/react-trafficlight-5.2.1.tgz#fea687b191c8e37b6e9029d171171f11e9865999"
+  integrity sha512-m1XD0Hp1xwq1vSuMNy4ZuuoedEVSe1qnN1JgJt+VJ72xF6J0+mK27RUJaDF4XO+33ipDZRVYw7PH7PXmQgKRIQ==
+
 react@^16.0.0, react@^16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"

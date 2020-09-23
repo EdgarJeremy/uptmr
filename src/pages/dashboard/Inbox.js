@@ -37,13 +37,18 @@ export default class Inbox extends React.Component {
         const { models, user, onCount } = this.props;
         this.setState({ ready: false });
         models.Report.collection({
-            attributes: ['id', 'description', 'urgency', 'room', 'since', 'done', 'created_at'],
+            attributes: ['id', 'description', 'urgency', 'room', 'since', 'done', 'status', 'created_at'],
             where: {
                 rejection_note: null,
                 department_id: {
                     $in: user.target_id
                 },
-                done: false
+                done: {
+                    $or: [true, false]
+                },
+                status: {
+                    $or: ['1', '2']
+                }
             },
             include: [{
                 model: 'User',
@@ -112,6 +117,10 @@ export default class Inbox extends React.Component {
         });
     }
 
+    changeStatus(r, v) {
+        r.update({ status: v }).then(() => this.fetch()).then(() => this.props.updateCount());
+    }
+
     render() {
         const { ready, data, addPopup, departments, selected } = this.state;
         const { models } = this.props;
@@ -144,14 +153,22 @@ export default class Inbox extends React.Component {
                             title="Action"
                             key="action"
                             render={(text, record) => (
-                                <Space size="middle">
-                                    <Popconfirm placement="top" title="Setujui item ini?" okText="Ya" cancelText="Tidak" onConfirm={() => this.onApprove(record)}>
-                                        <a>Setujui</a>
-                                    </Popconfirm>
-                                    <Popconfirm placement="top" title="Tolak item ini?" okText="Ya" cancelText="Tidak" onConfirm={() => this.onReject(record)}>
-                                        <a>Tolak</a>
-                                    </Popconfirm>
-                                </Space>
+                                record.done ? (
+                                    <Select value={record.status} onChange={(v) => this.changeStatus(record, v)}>
+                                        <Select.Option value="1">Belum ada tindakan</Select.Option>
+                                        <Select.Option value="2">Sedang Diproses</Select.Option>
+                                        <Select.Option value="3">Selesai</Select.Option>
+                                    </Select>
+                                ) : (
+                                        <Space size="middle">
+                                            <Popconfirm placement="top" title="Setujui item ini?" okText="Ya" cancelText="Tidak" onConfirm={() => this.onApprove(record)}>
+                                                <a>Setujui</a>
+                                            </Popconfirm>
+                                            <Popconfirm placement="top" title="Tolak item ini?" okText="Ya" cancelText="Tidak" onConfirm={() => this.onReject(record)}>
+                                                <a>Tolak</a>
+                                            </Popconfirm>
+                                        </Space>
+                                    )
                             )}
                         />
                     </Table>

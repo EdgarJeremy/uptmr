@@ -32,7 +32,8 @@ export default class Done extends React.Component {
             attributes: ['id', 'description', 'urgency', 'room', 'since', 'done', 'created_at'],
             where: {
                 department_id: user.department_id,
-                done: true
+                done: true,
+                status: '3'
             },
             include: [{
                 model: 'User',
