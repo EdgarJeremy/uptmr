@@ -154,7 +154,7 @@ export default class Inbox extends React.Component {
                             key="action"
                             render={(text, record) => (
                                 record.done ? (
-                                    <Select value={record.status} onChange={(v) => this.changeStatus(record, v)}>
+                                    <Select value={`${record.status}`} onChange={(v) => this.changeStatus(record, v)}>
                                         <Select.Option value="1">Belum ada tindakan</Select.Option>
                                         <Select.Option value="2">Sedang Diproses</Select.Option>
                                         <Select.Option value="3">Selesai</Select.Option>
