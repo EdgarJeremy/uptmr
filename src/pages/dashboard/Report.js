@@ -19,7 +19,8 @@ export default class Report extends React.Component {
         files: [],
         report_file: null,
         urgency: null,
-        questionnairePopup: false
+        questionnairePopup: false,
+        saveLoading: false
     }
 
     componentDidMount() {
@@ -57,6 +58,7 @@ export default class Report extends React.Component {
     onAdd() {
         const { files, report_file } = this.state;
         const { models } = this.props;
+        this.setState({ saveLoading: true });
         this.form.validateFields(['description', 'since', 'room', 'files', 'urgency', 'qs']).then((values) => {
             delete values.files;
             delete values.report_file;
@@ -64,8 +66,8 @@ export default class Report extends React.Component {
             values.questionnaire = values.qs.questionnaire;
             values.urgency = values.qs.urgency;
             delete values.qs;
-            models.Report.create(values).then((report) => this.setState({ addPopup: false })).then(() => this.fetch());
-        }).catch((err) => { });
+            models.Report.create(values).then((report) => this.setState({ addPopup: false })).then(() => this.fetch()).then(() => this.setState({ saveLoading: false }));
+        }).catch((err) => { this.setState({ saveLoading: false }) });
     }
 
     onDelete(r) {
@@ -101,7 +103,7 @@ export default class Report extends React.Component {
     }
 
     render() {
-        const { ready, data, addPopup } = this.state;
+        const { ready, data, addPopup, saveLoading } = this.state;
         const { models } = this.props;
         return (
             ready ? (
@@ -122,7 +124,7 @@ export default class Report extends React.Component {
                                     RedOn={r.status == 1}
                                     YellowOn={r.status == 2}
                                     GreenOn={r.status == 3}
-                                    // style={{height: 40}}
+                                // style={{height: 40}}
                                 />
                             ) : (
                                     <Tag color="red">Belum disetujui</Tag>
@@ -143,6 +145,7 @@ export default class Report extends React.Component {
                     <Modal
                         title="Buat Pengaduan"
                         visible={addPopup}
+                        okButtonProps={{ loading: saveLoading }}
                         onOk={this.onAdd.bind(this)}
                         onCancel={() => this.setState({ addPopup: false })}
                     >
