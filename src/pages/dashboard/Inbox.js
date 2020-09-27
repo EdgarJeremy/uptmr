@@ -72,7 +72,7 @@ export default class Inbox extends React.Component {
     }
 
     onApprove(r) {
-        r.update({ done: true, read: false }).then(() => this.fetch()).then(() => this.props.updateCount());
+        r.update({ done: true }).then(() => this.fetch()).then(() => this.props.updateCount());
     }
 
     onReject(r) {
@@ -118,7 +118,7 @@ export default class Inbox extends React.Component {
     }
 
     changeStatus(r, v) {
-        r.update({ status: v }).then(() => this.fetch()).then(() => this.props.updateCount());
+        r.update({ status: v, read: v != 3 }).then(() => this.fetch()).then(() => this.props.updateCount());
     }
 
     render() {
